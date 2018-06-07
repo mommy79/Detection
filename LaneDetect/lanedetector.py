@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
 import cv2
-import os
 import numpy as np
 import time
 
@@ -28,6 +27,11 @@ class LaneDetector:
         for i in range(0, len(self.__process)):
             cv2.imshow("Process" + str(i), self.__process[i])
 
+    # 결과이미지를 반환하는 메소드
+    def fn_get_result(self):
+        return self.__rst_image
+
+    # 결과이미지를 만드는 메소드
     def _set_tools_navigation(self, value):
         mask = cv2.line(self.__navigator_image, (value, self.__src_height // 2 - 5),
                         (value, self.__src_height // 2 + 5), (255, 0, 255), 1)
@@ -44,7 +48,7 @@ class LaneDetector:
     def _set_tools(self):
         # 가로선 이미지를 생성
         horizon = np.zeros((self.__src_height, self.__src_width), np.uint8)
-        offset = round(self.__src_height / self.__num_of_section)
+        offset = int(round(self.__src_height / self.__num_of_section))
         pre_pos = 0
         for i in range(0, self.__num_of_section):
             horizon = cv2.line(horizon, (0, pre_pos + offset), (self.__src_width, pre_pos + offset), 255, 1)
@@ -90,6 +94,7 @@ class LaneDetector:
         frame = np.hsplit(frame, [self.__src_width // 2, self.__src_width // 2 + 1])
         pxl_info = [dict({i: np.argwhere(frame[0][i]).transpose().reshape(-1) for i in range(0, self.__src_height)}),
                     dict({i: np.argwhere(frame[2][i]).transpose().reshape(-1) for i in range(0, self.__src_height)})]
+        frame = np.hstack((frame[0], frame[1], frame[2]))
 
         for i, info in enumerate(pxl_info):
             tmp = info.copy()
@@ -106,11 +111,11 @@ class LaneDetector:
         # 좌측 또는 우측의 차선이 검출되지 않을 경우의 예외처리
         if len(pxl_info[0]) < 3 or len(pxl_info[1]) < 3:
             if len(pxl_info[0]) < 3 <= len(pxl_info[1]):
-                # TODO: 오른쪽 픽셀의 정보를 Shift
-                print("1")
+                for key in pxl_info[1]:
+                    pxl_info[0].update({key: self.__src_width // 2 - pxl_info[1][key]})
             elif len(pxl_info[1]) < 3 <= len(pxl_info[0]):
-                # TODO: 왼쪽 픽셀의 정보를 Shift
-                print("2")
+                for key in pxl_info[0]:
+                    pxl_info[1].update({key: pxl_info[0][key]})
             else:
                 print("[WARNING]Lane not found")
                 frame = cv2.add(self.__src_image, self.__navigator_image)
@@ -120,7 +125,7 @@ class LaneDetector:
         center = dict()
         for key in pxl_info[0]:
             if pxl_info[1].get(key) is not None:
-                center.update({key: (pxl_info[0][key] + self.__src_width // 2 + pxl_info[1][key]) // 2})
+                center.update({key: (pxl_info[0][key] + (self.__src_width // 2 + pxl_info[1][key])) // 2})
 
         tmp = list(center.values())
         try:

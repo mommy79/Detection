@@ -28,6 +28,18 @@ class LaneDetector:
         for i in range(0, len(self.__process)):
             cv2.imshow("Process" + str(i), self.__process[i])
 
+    def _set_tools_navigation(self, value):
+        mask = cv2.line(self.__navigator_image, (value, self.__src_height // 2 - 5),
+                        (value, self.__src_height // 2 + 5), (255, 0, 255), 1)
+        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        __, mask = cv2.threshold(mask, 10, 255, cv2.THRESH_BINARY)
+        mask_inv = cv2.bitwise_not(mask)
+
+        img1 = cv2.bitwise_and(self.__src_image, self.__src_image, mask=mask_inv)
+        img2 = cv2.bitwise_and(self.__navigator_image, self.__navigator_image, mask=mask)
+        img = cv2.add(img1, img2)
+        return img
+
     # 차선인식에 필요한 도구를 만드는 메소드
     def _set_tools(self):
         # 가로선 이미지를 생성
@@ -49,7 +61,6 @@ class LaneDetector:
                  (cnt_point[0] - 100, cnt_point[1] + 5), (255, 0, 0), 2)
         cv2.line(navigator, (cnt_point[0] + 100, cnt_point[1] - 5),
                  (cnt_point[0] + 100, cnt_point[1] + 5), (255, 0, 0), 2)
-
         return horizon, navigator
 
     # 전치리 과정을 진행하는 메소드
@@ -92,20 +103,31 @@ class LaneDetector:
                         tmp[key] = min(info[key])
             pxl_info[i] = tmp
 
+        # 좌측 또는 우측의 차선이 검출되지 않을 경우의 예외처리
+        if len(pxl_info[0]) < 3 or len(pxl_info[1]) < 3:
+            if len(pxl_info[0]) < 3 <= len(pxl_info[1]):
+                # TODO: 오른쪽 픽셀의 정보를 Shift
+                print("1")
+            elif len(pxl_info[1]) < 3 <= len(pxl_info[0]):
+                # TODO: 왼쪽 픽셀의 정보를 Shift
+                print("2")
+            else:
+                print("[WARNING]Lane not found")
+                frame = cv2.add(self.__src_image, self.__navigator_image)
+                return frame
+
         # 좌우 pxl_info 를 바탕으로 각 행별 중앙선 좌표를 사전 형태로 저장
         center = dict()
         for key in pxl_info[0]:
             if pxl_info[1].get(key) is not None:
                 center.update({key: (pxl_info[0][key] + self.__src_width // 2 + pxl_info[1][key]) // 2})
+
         tmp = list(center.values())
         try:
             val = int(round(sum(tmp) / len(tmp)))
-
-            cv2.line(self.__navigator_image, (val, self.__src_height // 2 - 5),
-                     (val, self.__src_height // 2 + 5), (255, 0, 255), 1)
+            frame = self._set_tools_navigation(val)
         except ZeroDivisionError:
             pass
-        frame = cv2.add(self.__src_image, self.__navigator_image)
         self.__process.append(frame)
         return frame
 
@@ -125,3 +147,6 @@ if __name__ == '__main__':
 
         if cv2.waitKey(1) and 0xFF == ord('q'):
             break
+    cap.release()
+    cv2.destroyAllWindows()
+

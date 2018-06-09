@@ -26,17 +26,90 @@ class LaneDetector:
         self.__num_of_section = 10
         self.__horizon_image, self.__navigator_image = self._set_tools()
 
-        # 전처리 과정을 진행하는 메소드
-        self.__rst_image, self.__error = self._run()
+    # 전처리를 실행하는 메소드
+    def __call__(self):
+        # 원본 이미지 복사
+        frame = self.__src_image.copy()
+        self.__process.append(["Source Image", frame])
 
-    # 처리과정을 출력하는 메소드
-    def fn_show_process(self):
-        for i in range(0, len(self.__process)):
-            cv2.imshow(self.__process[i][0], self.__process[i][1])
+        # 그레이 이미지 변환
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        self.__process.append(["Gray Image", frame])
 
-    # 결과이미지를 반환하는 메소드
-    def fn_get_result(self):
-        return self.__rst_image, self.__error
+        # 이진화 이미지 변환
+        __, frame = cv2.threshold(frame, 100, 255, cv2.THRESH_BINARY)
+        self.__process.append(["Threshold Image", frame])
+
+        # Canny 이미지 변환
+        frame = cv2.Canny(frame, 150, 200, apertureSize=7)
+        self.__process.append(["Canny Image", frame])
+
+        # Perspective 이미지 변환
+        tmp = cv2.getPerspectiveTransform(self.__init_position, self.__trans_position)
+        frame = cv2.warpPerspective(frame, tmp, (self.__pers_width, self.__pers_height))
+        self.__process.append(["Perspective Image", frame])
+
+        # Canny 이미지와 Horizon 이미지의 교차점 탐색
+        frame = cv2.bitwise_and(frame, self.__horizon_image)
+        self.__process.append(["Dot Image", frame])
+
+        # frame[0]: 좌, frame[1]: 중앙선, frame[2]: 우 좌우의
+        # 좌우에서 각 행별 중앙선에 가까운 픽셀을 탐색해 사전 형태로 저장
+        frame = np.hsplit(frame, [self.__src_width // 2, self.__src_width // 2 + 1])
+        pxl_info = [dict({i: np.argwhere(frame[0][i]).transpose().reshape(-1) for i in range(0, self.__src_height)}),
+                    dict({i: np.argwhere(frame[2][i]).transpose().reshape(-1) for i in range(0, self.__src_height)})]
+        frame = np.hstack((frame[0], frame[1], frame[2]))
+
+        for i, info in enumerate(pxl_info):
+            tmp = info.copy()
+            for key in info:
+                if len(info[key]) == 0:
+                    tmp.pop(key)
+                else:
+                    if i == 0:
+                        tmp[key] = max(info[key])
+                    else:
+                        tmp[key] = min(info[key])
+            pxl_info[i] = tmp
+
+        # If -> 좌측 또는 우측의 차선이 검출되지 않을 경우의 예외처리
+        # Else -> 좌우측의 차선이 모두 검출되는 경우 중앙값 구하기
+        center = dict()
+        if len(pxl_info[0]) < 3 or len(pxl_info[1]) < 3:
+            if len(pxl_info[1]) < 3 <= len(pxl_info[0]):
+                for key in pxl_info[0]:
+                    center.update({key: pxl_info[0][key] + 200})
+            elif len(pxl_info[0]) < 3 <= len(pxl_info[1]):
+                for key in pxl_info[1]:
+                    center.update({key: pxl_info[1][key] - 200})
+            else:
+                print("[WARNING]Lane not found")
+                err = 0
+                frame = cv2.add(self.__src_image, self.__navigator_image)
+                self.__process.append(["Result Image", frame])
+                return frame, err
+        else:
+            for key in pxl_info[0]:
+                if pxl_info[1].get(key) is not None:
+                    center.update({key: (pxl_info[0][key] + (self.__src_width // 2 + pxl_info[1][key])) // 2})
+
+        tmp = np.array(list(center.values()))
+        try:
+            val = int(np.mean(tmp))
+            err = val - self.__src_width // 2
+            frame = self._set_tools_navigation(val)
+        except ZeroDivisionError:
+            print("[WARNING]ZeroDivisionError")
+            err = 0
+            frame = cv2.add(self.__src_image, self.__navigator_image)
+            self.__process.append(["Result Image", frame])
+            return frame, err
+        self.__process.append(["Result Image", frame])
+        return frame, err
+
+    # 처리이미지 과정을 반환하는 메소드
+    def fn_get_process(self):
+        return self.__process
 
     # 결과이미지를 만드는 메소드
     def _set_tools_navigation(self, value):
@@ -74,88 +147,6 @@ class LaneDetector:
                  (cnt_point[0] + 100, cnt_point[1] + 5), (255, 0, 0), 2)
         return horizon, navigator
 
-    # 전치리 과정을 진행하는 메소드
-    def _run(self):
-        # 원본 이미지 복사
-        frame = self.__src_image.copy()
-        self.__process.append(["Source Image", frame])
-
-        # 그레이 이미지 변환
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        self.__process.append(["Gray Image", frame])
-
-        # 이진화 이미지 변환
-        __, frame = cv2.threshold(frame, 240, 255, cv2.THRESH_BINARY)
-        self.__process.append(["Threshold Image", frame])
-
-        # Canny 이미지 변환
-        frame = cv2.Canny(frame, 150, 200, apertureSize=7)
-        self.__process.append(["Canny Image", frame])
-
-        # Perspective 이미지 변환
-        tmp = cv2.getPerspectiveTransform(self.__init_position, self.__trans_position)
-        frame = cv2.warpPerspective(frame, tmp, (self.__pers_width, self.__pers_height))
-        self.__process.append(["Perspective Image", frame])
-
-        # Canny 이미지와 Horizon 이미지의 교차점 탐색
-        frame = cv2.bitwise_and(frame, self.__horizon_image)
-        self.__process.append(["Dot Image", frame])
-
-        # frame[0]: 좌, frame[1]: 중앙선, frame[2]: 우 좌우의
-        # 좌우에서 각 행별 중앙선에 가까운 픽셀을 탐색해 사전 형태로 저장
-        frame = np.hsplit(frame, [self.__src_width // 2, self.__src_width // 2 + 1])
-        pxl_info = [dict({i: np.argwhere(frame[0][i]).transpose().reshape(-1) for i in range(0, self.__src_height)}),
-                    dict({i: np.argwhere(frame[2][i]).transpose().reshape(-1) for i in range(0, self.__src_height)})]
-        frame = np.hstack((frame[0], frame[1], frame[2]))
-
-        for i, info in enumerate(pxl_info):
-            tmp = info.copy()
-            for key in info:
-                if len(info[key]) == 0:
-                    tmp.pop(key)
-                else:
-                    if i == 0:
-                        tmp[key] = max(info[key])
-                    else:
-                        tmp[key] = min(info[key])
-            pxl_info[i] = tmp
-
-        # 좌측 또는 우측의 차선이 검출되지 않을 경우의 예외처리
-        center = dict()
-        # TODO: 이 if문 때문에 None이 Return되서 에러뜸
-        if len(pxl_info[0]) < 3 or len(pxl_info[1]) < 3:
-            if len(pxl_info[1]) < 3 <= len(pxl_info[0]):
-                # TODO: 수정해야함 여기서 None이 Return되서 에러뜸
-                for key in pxl_info[0]:
-                    pxl_info[1].update({key: pxl_info[0][key]})
-            elif len(pxl_info[0]) < 3 <= len(pxl_info[1]):
-                # TODO: 수정해야함
-                for key in pxl_info[1]:
-                    pxl_info[0].update({key: self.__src_width // 2 - pxl_info[1][key]})
-            else:
-                print("[WARNING]Lane not found")
-                err = 0
-                frame = cv2.add(self.__src_image, self.__navigator_image)
-                self.__process.append(["Result Image", frame])
-                return frame, err
-        # 좌우측의 차선이 모두 검출되는 경우 중앙값 구하기
-        for key in pxl_info[0]:
-            if pxl_info[1].get(key) is not None:
-                center.update({key: (pxl_info[0][key] + (self.__src_width // 2 + pxl_info[1][key])) // 2})
-        tmp = np.array(list(center.values()))
-        try:
-            val = int(np.mean(tmp))
-            err = val - self.__src_width // 2
-            frame = self._set_tools_navigation(val)
-        except ZeroDivisionError:
-            print("[WARNING]ZeroDivisionError")
-            err = 0
-            frame = cv2.add(self.__src_image, self.__navigator_image)
-            self.__process.append(["Result Image", frame])
-            return frame, err
-        self.__process.append(["Result Image", frame])
-        return frame, err
-
 
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
@@ -167,12 +158,16 @@ if __name__ == '__main__':
         fm = fm[60:, :, :]
 
         node = LaneDetector(fm)
-        # 처리과정 이미지 출력
-        node.fn_show_process()
 
         # 결과 이미지 출력 및 Error 출력
-        result, error = node.fn_get_result()
+        result, error = node.__call__()
         print(error)
+
+        # 처리과정 이미지 출력
+        process = node.fn_get_process()
+        for i in range(0, len(process)):
+            cv2.imshow(process[i][0], process[i][1])
+
         if cv2.waitKey(1) and 0xFF == ord('q'):
             break
 

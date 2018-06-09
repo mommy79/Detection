@@ -1,35 +1,42 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
-import cv2
 import numpy as np
+import cv2
 import time
 
 
 class LaneDetector:
     # 기본변수 셋팅 후 전처리를 진행하는 생성자
-    def __init__(self, image):
+    def __init__(self, img):
         # 이미지 처리과정을 보여주는 변수
         self.__process = []
 
         # 원본 이미지 관련 변수
-        self.__src_image = image
+        self.__src_image = img
         self.__src_height, self.__src_width = self.__src_image.shape[:2]
 
+        # Perspective 이미지 관련 변수
+        self.__ratio = (1, 1)
+        self.__pers_height = int(self.__src_height * self.__ratio[0])
+        self.__pers_width = int(self.__src_width * self.__ratio[1])
+        self.__init_position = np.float32([[40, 0], [0, 99], [430, 0], [480, 99]])
+        self.__trans_position = np.float32([[50, 0], [40, 99], [420, 0], [440, 99]])
+
         # 전처리에 필요한 도구를 만드는 변수와 메소드(가로선, 네비게이터)
-        self.__num_of_section = 20
+        self.__num_of_section = 10
         self.__horizon_image, self.__navigator_image = self._set_tools()
 
         # 전처리 과정을 진행하는 메소드
-        self.__rst_image = self._run()
+        self.__rst_image, self.__error = self._run()
 
     # 처리과정을 출력하는 메소드
     def fn_show_process(self):
         for i in range(0, len(self.__process)):
-            cv2.imshow("Process" + str(i), self.__process[i])
+            cv2.imshow(self.__process[i][0], self.__process[i][1])
 
     # 결과이미지를 반환하는 메소드
     def fn_get_result(self):
-        return self.__rst_image
+        return self.__rst_image, self.__error
 
     # 결과이미지를 만드는 메소드
     def _set_tools_navigation(self, value):
@@ -71,23 +78,28 @@ class LaneDetector:
     def _run(self):
         # 원본 이미지 복사
         frame = self.__src_image.copy()
-        self.__process.append(frame)
+        self.__process.append(["Source Image", frame])
 
         # 그레이 이미지 변환
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        self.__process.append(frame)
+        self.__process.append(["Gray Image", frame])
 
         # 이진화 이미지 변환
         __, frame = cv2.threshold(frame, 240, 255, cv2.THRESH_BINARY)
-        self.__process.append(frame)
+        self.__process.append(["Threshold Image", frame])
 
         # Canny 이미지 변환
         frame = cv2.Canny(frame, 150, 200, apertureSize=7)
-        self.__process.append(frame)
+        self.__process.append(["Canny Image", frame])
+
+        # Perspective 이미지 변환
+        tmp = cv2.getPerspectiveTransform(self.__init_position, self.__trans_position)
+        frame = cv2.warpPerspective(frame, tmp, (self.__pers_width, self.__pers_height))
+        self.__process.append(["Perspective Image", frame])
 
         # Canny 이미지와 Horizon 이미지의 교차점 탐색
         frame = cv2.bitwise_and(frame, self.__horizon_image)
-        self.__process.append(frame)
+        self.__process.append(["Dot Image", frame])
 
         # frame[0]: 좌, frame[1]: 중앙선, frame[2]: 우 좌우의
         # 좌우에서 각 행별 중앙선에 가까운 픽셀을 탐색해 사전 형태로 저장
@@ -109,32 +121,40 @@ class LaneDetector:
             pxl_info[i] = tmp
 
         # 좌측 또는 우측의 차선이 검출되지 않을 경우의 예외처리
+        center = dict()
+        # TODO: 이 if문 때문에 None이 Return되서 에러뜸
         if len(pxl_info[0]) < 3 or len(pxl_info[1]) < 3:
-            if len(pxl_info[0]) < 3 <= len(pxl_info[1]):
-                for key in pxl_info[1]:
-                    pxl_info[0].update({key: self.__src_width // 2 - pxl_info[1][key]})
-            elif len(pxl_info[1]) < 3 <= len(pxl_info[0]):
+            if len(pxl_info[1]) < 3 <= len(pxl_info[0]):
+                # TODO: 수정해야함 여기서 None이 Return되서 에러뜸
                 for key in pxl_info[0]:
                     pxl_info[1].update({key: pxl_info[0][key]})
+            elif len(pxl_info[0]) < 3 <= len(pxl_info[1]):
+                # TODO: 수정해야함
+                for key in pxl_info[1]:
+                    pxl_info[0].update({key: self.__src_width // 2 - pxl_info[1][key]})
             else:
                 print("[WARNING]Lane not found")
+                err = 0
                 frame = cv2.add(self.__src_image, self.__navigator_image)
-                return frame
-
-        # 좌우 pxl_info 를 바탕으로 각 행별 중앙선 좌표를 사전 형태로 저장
-        center = dict()
+                self.__process.append(["Result Image", frame])
+                return frame, err
+        # 좌우측의 차선이 모두 검출되는 경우 중앙값 구하기
         for key in pxl_info[0]:
             if pxl_info[1].get(key) is not None:
                 center.update({key: (pxl_info[0][key] + (self.__src_width // 2 + pxl_info[1][key])) // 2})
-
-        tmp = list(center.values())
+        tmp = np.array(list(center.values()))
         try:
-            val = int(round(sum(tmp) / len(tmp)))
+            val = int(np.mean(tmp))
+            err = val - self.__src_width // 2
             frame = self._set_tools_navigation(val)
         except ZeroDivisionError:
-            pass
-        self.__process.append(frame)
-        return frame
+            print("[WARNING]ZeroDivisionError")
+            err = 0
+            frame = cv2.add(self.__src_image, self.__navigator_image)
+            self.__process.append(["Result Image", frame])
+            return frame, err
+        self.__process.append(["Result Image", frame])
+        return frame, err
 
 
 if __name__ == '__main__':
@@ -144,14 +164,19 @@ if __name__ == '__main__':
 
         __, fm = cap.read()
         fm = cv2.resize(fm, (480, 100))
+        fm = fm[60:, :, :]
+
         node = LaneDetector(fm)
-
-        # 결과 이미지 출력
+        # 처리과정 이미지 출력
         node.fn_show_process()
-        print(str(round(time.time() - pre_t, 6)) + "(초)")
 
+        # 결과 이미지 출력 및 Error 출력
+        result, error = node.fn_get_result()
+        print(error)
         if cv2.waitKey(1) and 0xFF == ord('q'):
             break
+
+        print(str(round(time.time() - pre_t, 6)) + "(초)")
     cap.release()
     cv2.destroyAllWindows()
 

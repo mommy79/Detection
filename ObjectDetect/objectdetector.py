@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
+import time
 import os
 import cv2
 
@@ -97,6 +98,7 @@ class FeatureMatching:
 
         else:
             while cap.isOpened():
+                pre_t = time.time()
                 ret, frame = cap.read()
                 if ret:
                     self.fn_flann(frame)
@@ -142,9 +144,10 @@ class FeatureMatching:
                         cv2.imshow("Result", result)
                     self.fn_clear()
 
+                    print(str(round(time.time() - pre_t, 6)) + "(초)")
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
-
+                    cv2.imshow("test", frame)
             cap.release()
             cv2.destroyAllWindows()
 

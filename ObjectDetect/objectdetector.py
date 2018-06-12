@@ -130,14 +130,12 @@ class ObjectDetector:
 
 if __name__ == '__main__':
     obj = ObjectDetector()
-
     cap = cv2.VideoCapture(0)
-    cap.set(3, 220)
-    cap.set(4, 140)
 
     prev_time = 0
     while cap.isOpened():
-        __, frame = cap.read()
+        ret, fm = cap.read()
+        fm = cv2.resize(fm, (480, 240))
 
         # FPS 를 구하는 과정
         cur_time = time.time()
@@ -145,7 +143,7 @@ if __name__ == '__main__':
         prev_time = cur_time
 
         pre_t = time.time()
-        rst = obj(frame, f)
+        rst = obj(fm, f)
         print(str(round(time.time() - pre_t, 6)) + "(초)")
 
         if rst is not None:

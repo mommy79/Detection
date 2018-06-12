@@ -145,11 +145,11 @@ class LaneDetector:
 
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture(0)
     node = LaneDetector((40, 480))
+    cap = cv2.VideoCapture(0)
 
     prev_time = 0
-    while True:
+    while cap.isOpened():
         ret, fm = cap.read()
         fm = cv2.resize(fm, (480, 100))
         fm = fm[60:, :, :]
@@ -167,10 +167,10 @@ if __name__ == '__main__':
         # 처리과정 이미지 출력
         for process in node.process:
             cv2.imshow(process[0], process[1])
+        node.process.clear()
 
         if cv2.waitKey(1) and 0xFF == ord('q'):
             break
-
     cap.release()
     cv2.destroyAllWindows()
 

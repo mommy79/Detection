@@ -131,7 +131,7 @@ class LaneDetector:
                 err = 0
                 fps = "FPS : %0.1f" % fps
                 frame = cv2.add(src, self.__navigator_image)
-                #cv2.putText(frame, fps, (10, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                cv2.putText(frame, fps, (10, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
                 self.process.append(["Result Image", frame])
                 return err
 
@@ -139,7 +139,7 @@ class LaneDetector:
         err = val - self.__src_width // 2
         fps = "FPS : %0.1f" % fps
         frame = self._set_tools_navigation(src, val)
-        #cv2.putText(frame, fps, (10, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+        cv2.putText(frame, fps, (10, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
         self.process.append(["Result Image", frame])
         return err
 

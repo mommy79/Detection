@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="caabe70f-e31c-4081-9fdf-fdf2d17a3e1b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Detection.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Detection.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LaneDetect/lanedetector.py" beforeDir="false" afterPath="$PROJECT_DIR$/LaneDetect/lanedetector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObjectDetect/objectdetector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ObjectDetect/objectdetector.py" afterDir="false" />
@@ -20,8 +18,8 @@
       <file leaf-file-name="lanedetector.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/LaneDetect/lanedetector.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="29" selection-start-line="29" selection-end-line="29" />
+            <state relative-caret-position="-281">
+              <caret line="140" column="29" lean-forward="true" selection-start-line="140" selection-start-column="29" selection-end-line="140" selection-end-column="29" />
               <folding>
                 <element signature="e#43#61#0" expanded="true" />
               </folding>
@@ -32,16 +30,23 @@
       <file leaf-file-name="objectdetector.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="28" column="47" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
+            <state relative-caret-position="233">
+              <caret line="63" column="27" lean-forward="true" selection-start-line="63" selection-start-column="27" selection-end-line="63" selection-end-column="27" />
               <folding>
-                <element signature="e#22#40#0" expanded="true" />
+                <element signature="e#43#61#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -51,6 +56,7 @@
       <list>
         <option value="$PROJECT_DIR$/LaneDetect/lanedetector.py" />
         <option value="$PROJECT_DIR$/ObjectDetect/objectdetector.py" />
+        <option value="$PROJECT_DIR$/ObjectDetect/objectdetector2.py" />
       </list>
     </option>
   </component>
@@ -64,7 +70,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -86,6 +91,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -104,7 +110,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.lanedetector">
+  <component name="RunManager" selected="Python.objectdetector2">
     <configuration name="lanedetector" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Detection" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -135,6 +141,24 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ObjectDetect/objectdetector3.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="objectdetector2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Detection" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ObjectDetect" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ObjectDetect/objectdetector.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -144,11 +168,13 @@
     <list>
       <item itemvalue="Python.lanedetector" />
       <item itemvalue="Python.objectdetector" />
+      <item itemvalue="Python.objectdetector2" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.lanedetector" />
+        <item itemvalue="Python.objectdetector2" />
         <item itemvalue="Python.objectdetector" />
+        <item itemvalue="Python.lanedetector" />
       </list>
     </recent_temporary>
   </component>
@@ -178,14 +204,14 @@
     <frame x="0" y="22" width="1280" height="710" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49878347" visible="true" weight="0.2494043" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49878347" visible="true" weight="0.2494043" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32952693" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32952693" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32952693" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32952693" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info id="Structure" order="1" sideWeight="0.50121653" side_tool="true" weight="0.2494043" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39967373" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -238,10 +264,30 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="17" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/LaneDetect/lanedetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2310">
+          <caret line="154" column="26" selection-start-line="154" selection-start-column="26" selection-end-line="154" selection-end-column="26" />
+          <folding>
+            <element signature="e#43#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
+          <folding>
+            <element signature="e#22#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/LaneDetect/lanedetector.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -252,7 +298,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="13" column="27" lean-forward="true" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
+          <folding>
+            <element signature="e#22#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LaneDetect/lanedetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+          <folding>
+            <element signature="e#43#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="28" column="47" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
+          <folding>
+            <element signature="e#22#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LaneDetect/lanedetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+          <folding>
+            <element signature="e#43#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="47" lean-forward="true" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
@@ -272,7 +358,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="41" lean-forward="true" selection-start-line="9" selection-start-column="41" selection-end-line="9" selection-end-column="41" />
@@ -292,7 +378,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2190">
           <caret line="149" column="20" selection-start-line="149" selection-start-column="20" selection-end-line="149" selection-end-column="20" />
@@ -312,7 +398,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
           <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
@@ -332,7 +418,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2310">
           <caret line="154" column="26" lean-forward="true" selection-start-line="154" selection-start-column="26" selection-end-line="154" selection-end-column="26" />
@@ -352,7 +438,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
           <caret line="13" column="76" selection-start-line="13" selection-start-column="76" selection-end-line="13" selection-end-column="76" />
@@ -372,7 +458,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="5" selection-start-line="5" selection-end-line="5" />
@@ -392,7 +478,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="5" selection-start-line="5" selection-end-line="5" />
@@ -412,7 +498,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
@@ -432,7 +518,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="13" column="31" selection-start-line="13" selection-start-column="31" selection-end-line="13" selection-end-column="31" />
@@ -483,10 +569,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/Documents/VirtualEnvs/cv2ExtraModule/lib/python3.6/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="319" selection-start-line="319" selection-end-line="319" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2175">
+          <caret line="145" column="40" selection-start-line="145" selection-start-column="40" selection-end-line="145" selection-end-column="40" />
+          <folding>
+            <element signature="e#22#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/LaneDetect/lanedetector.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        <state relative-caret-position="-281">
+          <caret line="140" column="29" lean-forward="true" selection-start-line="140" selection-start-column="29" selection-end-line="140" selection-end-column="29" />
           <folding>
             <element signature="e#43#61#0" expanded="true" />
           </folding>
@@ -495,10 +598,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ObjectDetect/objectdetector.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="28" column="47" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
+        <state relative-caret-position="233">
+          <caret line="63" column="27" lean-forward="true" selection-start-line="63" selection-start-column="27" selection-end-line="63" selection-end-column="27" />
           <folding>
-            <element signature="e#22#40#0" expanded="true" />
+            <element signature="e#43#61#0" expanded="true" />
           </folding>
         </state>
       </provider>
